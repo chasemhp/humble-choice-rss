@@ -1,12 +1,13 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 import hashlib
 
 # Gist Config
-GIST_ID = "your_gist_id_here"
+GIST_ID = "ea3ae1c23827b0be1f94dbb1f824f98c"
 GIST_FILENAME = "humble_choice_feed.xml"
-GIST_TOKEN = "your_token_here"  # Replaced via GitHub secret
+GIST_TOKEN = os.environ["GIST_TOKEN"]
 
 # Scrape Humble Choice Page
 url = "https://www.humblebundle.com/membership"
