@@ -26,6 +26,7 @@ if not games:
         title = game["data-human-name"]
         if title and title not in games:
             games.append(title)
+games.append("TEST GAME XYZ")
 
 # Format RSS content
 bundle_title = datetime.now().strftime("%B %Y") + " Humble Choice"
