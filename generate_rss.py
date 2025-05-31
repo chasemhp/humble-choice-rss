@@ -14,38 +14,40 @@ url = "https://www.humblebundle.com/membership"
 res = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
 soup = BeautifulSoup(res.text, "html.parser")
 
-# Extract Game Titles using grid card layout
+# Extract Game Titles using grid caption or fallback
 games = []
 for card in soup.find_all("div", class_="dd-image-box-caption"):
     text = card.get_text(strip=True)
     if text and text not in games:
         games.append(text)
 
-# Fallback if new layout fails
 if not games:
     for game in soup.select("div[data-human-name]"):
         title = game["data-human-name"]
-        if title not in games:
+        if title and title not in games:
             games.append(title)
 
 # Format RSS content
 bundle_title = datetime.now().strftime("%B %Y") + " Humble Choice"
 bundle_url = "https://www.humblebundle.com/membership"
+
+# Build game list + optional "...and more!"
 max_expected = 8
 game_lines = [f"- {g}" for g in games]
-add_more_note = len(games) < max_expected
-
-if add_more_note:
+if len(games) < max_expected:
     game_lines.append("...and more!")
 
 bundle_description = (
-    "🎮 **New Humble Choice Bundle is out!**\\nIncludes:\\n"
-    + "\\n".join(game_lines)
-    + "\\n\\n🔗 https://www.humblebundle.com/membership"
+    "🎮 **New Humble Choice Bundle is out!**\nIncludes:\n"
+    + "\n".join(game_lines)
+    + "\n\n🔗 https://www.humblebundle.com/membership"
 )
+
+# Hash for GUID and set date
 bundle_hash = hashlib.md5(bundle_description.encode()).hexdigest()
 pub_date = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
+# RSS layout
 rss_template = """<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
 <rss version=\"2.0\">
 <channel>
@@ -63,6 +65,7 @@ rss_template = """<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
 </channel>
 </rss>"""
 
+# Final formatted RSS string
 rss = rss_template.format(
     bundle_url=bundle_url,
     pub_date=pub_date,
