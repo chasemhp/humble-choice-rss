@@ -1,0 +1,27 @@
+name: Update Humble Choice RSS
+
+on:
+  schedule:
+    - cron: '0 14 1-7 * 2'  # First Tuesday of each month at 2:00 PM UTC
+  workflow_dispatch:
+
+jobs:
+  update-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run scraper and update Gist
+        env:
+          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+        run: |
+          python generate_rss.py
