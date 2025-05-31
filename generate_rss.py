@@ -31,7 +31,18 @@ if not games:
 # Format RSS content
 bundle_title = datetime.now().strftime("%B %Y") + " Humble Choice"
 bundle_url = "https://www.humblebundle.com/membership"
-bundle_description = "🎮 **New Humble Choice Bundle is out!**\nIncludes:\n" + "\n".join(f"- {g}" for g in games) + f"\n\n🔗 {bundle_url}"
+max_expected = 8
+game_lines = [f"- {g}" for g in games]
+add_more_note = len(games) < max_expected
+
+if add_more_note:
+    game_lines.append("...and more!")
+
+bundle_description = (
+    "🎮 **New Humble Choice Bundle is out!**\\nIncludes:\\n"
+    + "\\n".join(game_lines)
+    + "\\n\\n🔗 https://www.humblebundle.com/membership"
+)
 bundle_hash = hashlib.md5(bundle_description.encode()).hexdigest()
 pub_date = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
